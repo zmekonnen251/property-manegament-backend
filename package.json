@@ -1,0 +1,41 @@
+{
+	"name": "hotel-mangement-website-api",
+	"version": "1.0.0",
+	"description": "\"It is an api for hotel mangement website\"",
+	"main": "server.js",
+	"scripts": {
+		"start": "nodemon server.js",
+		"dev": "nodemon server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zmekonnen251/hotel-manegement-website.git"
+	},
+	"author": "\"Zelalem M.\"",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/zmekonnen251/hotel-manegement-website/issues"
+	},
+	"homepage": "https://github.com/zmekonnen251/hotel-manegement-website#readme",
+	"dependencies": {
+		"bcrypt": "^5.1.0",
+		"compression": "^1.7.4",
+		"cors": "^2.8.5",
+		"crypto": "^1.0.1",
+		"dotenv": "^16.3.1",
+		"express": "^4.18.2",
+		"html-to-text": "^9.0.5",
+		"jsonwebtoken": "^9.0.0",
+		"morgan": "^1.10.0",
+		"multer": "^1.4.5-lts.1",
+		"node-schedule": "^2.1.1",
+		"nodemailer": "^6.9.3",
+		"nodemon": "^2.0.22",
+		"pg": "^8.11.1",
+		"pg-hstore": "^2.3.4",
+		"pug": "^3.0.2",
+		"sequelize": "^6.32.1",
+		"sharp": "^0.32.1",
+		"slugify": "^1.6.6"
+	}
+}
