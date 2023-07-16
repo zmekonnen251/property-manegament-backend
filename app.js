@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 
-const corsOptions = require('./config/corsOptions');
+// const corsOptions = require('./config/corsOptions');
 
 const roomsRouter = require('./routes/roomsRoute');
 const employeesRouter = require('./routes/employeesRoute');
@@ -29,7 +29,7 @@ const app = express();
 app.enable('trust proxy');
 // 1) GLOBAL MIDDLEWARES
 
-app.use(cors(corsOptions));
+app.use(cors('*'));
 // app.options('*', cors());
 
 // serving static files
