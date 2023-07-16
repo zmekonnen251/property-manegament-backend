@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 
-const corsOptions = require('./config/corsOptions');
+// const corsOptions = require('./config/corsOptions');
 
 const roomsRouter = require('./routes/roomsRoute');
 const employeesRouter = require('./routes/employeesRoute');
@@ -12,7 +12,7 @@ const reservationsRouter = require('./routes/reservationsRoute');
 const roomTypesRouter = require('./routes/roomTypesRoute');
 const expenseRouter = require('./routes/expensesRoute');
 
-const AppError = require('./utils/appError');
+// const AppError = require('./utils/appError');
 
 const {
 	globalErrorHandler,
@@ -29,8 +29,8 @@ const app = express();
 app.enable('trust proxy');
 // 1) GLOBAL MIDDLEWARES
 
-app.use(cors(corsOptions));
-// app.options('*', cors());
+// app.use(cors(corsOptions));
+app.options('*', cors());
 
 // serving static files
 app.use(express.static(path.join(__dirname, 'public')));
