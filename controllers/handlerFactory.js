@@ -22,15 +22,9 @@ const deleteOne = (Model) =>
 
 const updateOne = (Model, filter) =>
 	catchAsync(async (req, res, next) => {
-		if (Model.name === 'User') if (req.file) req.body.photo = req.file.filename;
-
-		if (Model.name === 'Book') {
-			if (req.body.price) req.body.price = parseInt(req.body.price);
-		}
-
 		const filteredBody = filter ? filterObj(req.body, ...filter) : req.body;
-
-		await Model.update(
+		console.log(filteredBody);
+		const data = await Model.update(
 			{
 				...filteredBody,
 			},
@@ -38,6 +32,7 @@ const updateOne = (Model, filter) =>
 				where: { id: req.params.id },
 			}
 		);
+		console.log(data);
 		const doc = await Model.findByPk(req.params.id);
 
 		if (!doc) {

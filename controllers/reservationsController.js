@@ -7,6 +7,7 @@ const Reservation = require('../models/reservationModel');
 const Employee = require('../models/employeeModel');
 const Guest = require('../models/guestModel');
 const { Op } = require('sequelize');
+const RoomType = require('../models/roomTypeModel');
 dotenv.config();
 
 //  const chapaCheckout = catchAsync(async (req, res, next) => {
@@ -125,8 +126,95 @@ const getAllReservations = factory.getAll(Reservation, 'Room, Employee, Guest');
 // 	});
 
 const deleteReservation = factory.deleteOne(Reservation);
-const getReservation = factory.getOne(Reservation, 'Employee,Guest');
-const updateReservation = factory.updateOne(Reservation);
+const getReservation = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	const reservation = await Reservation.findOne({
+		where: {
+			id,
+		},
+		include: [Guest, Employee],
+	});
+
+	const rooms = await Room.findAll({
+		where: {
+			id: { [Op.in]: reservation.rooms },
+		},
+		include: [RoomType],
+	});
+
+	reservation.dataValues.rooms = rooms;
+
+	res.status(200).json({
+		data: reservation,
+		status: 'success',
+	});
+});
+const updateReservation = catchAsync(async (req, res, next) => {
+	const {
+		firstName,
+		lastName,
+		phone,
+		email,
+		dateIn,
+		dateOut,
+		paidBy,
+		paidAmount,
+		roomId,
+	} = req.body;
+	const reservation = await Reservation.findByPk(req.params.id);
+	const updatedGuest = await Guest.update(
+		{ firstName, lastName, phone, email },
+		{
+			where: {
+				id: reservation.GuestId,
+			},
+		}
+	);
+	const updatedReservation = await Reservation.update(
+		{
+			GuestId: updatedGuest.id,
+			dateIn: dateIn,
+			dateOut: dateOut,
+			paidBy,
+			paidAmount,
+			EmployeeId: req.employee.id,
+			status: 'checkedIn',
+			rooms: [roomId],
+		},
+		{
+			where: {
+				id: req.params.id,
+			},
+		},
+		{
+			include: [Employee, Guest],
+		}
+	);
+
+	console.log(reservation.rooms);
+
+	if (!(roomId in reservation.rooms)) {
+		await Room.update(
+			{ status: 'unavailable' },
+			{
+				where: {
+					id: roomId,
+				},
+			}
+		);
+
+		await Room.update(
+			{ status: 'available' },
+			{
+				where: {
+					id: reservation.rooms[0],
+				},
+			}
+		);
+	}
+
+	res.status(200).json({ status: 'success', data: updatedReservation });
+});
 
 const createReservation = catchAsync(async (req, res, next) => {
 	const {
@@ -151,8 +239,24 @@ const createReservation = catchAsync(async (req, res, next) => {
 			paidBy,
 			paidAmount,
 			EmployeeId: req.employee.id,
+			status: 'checkedIn',
 			rooms: [roomId],
 		});
+
+		if (newReservation) {
+			await Room.update(
+				{ status: 'unavailable' },
+				{
+					where: {
+						id: roomId,
+					},
+				}
+			);
+		}
+	}
+
+	if (!newReservation) {
+		return next(new AppError('Something went wrong', 404));
 	}
 
 	res.status(200).json({ status: 'success', data: newReservation });
@@ -161,13 +265,15 @@ const createReservation = catchAsync(async (req, res, next) => {
 const checkoutExpiredReservation = async () => {
 	const rooms = await Room.findAll({ where: { status: 'unavailable' } });
 	rooms.forEach(async (room) => {
-		const reservation = await Reservation.findAll({
-			where: { rooms: { [Op.contains]: [room.id] }
-			},
+		const reservation = await Reservation.findOne({
+			where: { rooms: { [Op.contains]: [room.id] } },
 		});
 
-		if (reservation) {
-			Reservation.update(
+		if (
+			reservation &&
+			new Date(reservation.dateOut).getTime() < new Date().getTime()
+		) {
+			await Reservation.update(
 				{ status: 'checkedOut' },
 				{
 					where: {
@@ -175,17 +281,14 @@ const checkoutExpiredReservation = async () => {
 					},
 				}
 			);
-			
-			if (reservation.dateOut < new Date()) {
-				await Room.update(
-					{ status: 'available', ready: false },
-					{
-						where: {
-							id: room.id,
-						},
-					}
-				);
-			}
+			await Room.update(
+				{ status: 'available', ready: false },
+				{
+					where: {
+						id: room.id,
+					},
+				}
+			);
 		}
 	});
 };
@@ -233,11 +336,8 @@ const getLatestReservations = catchAsync(async (req, res, next) => {
 
 	latestReservations.forEach((reservation) => {
 		rooms.forEach((room) => {
-			if (room.ReservationId === reservation.id) {
+			if (reservation.rooms.includes(room.id)) {
 				reservation.dataValues.Room = room;
-			}
-			if(room.ReservationId === null){
-				reservation.dataValues.Room = null;
 			}
 		});
 	});

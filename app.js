@@ -10,6 +10,7 @@ const employeesRouter = require('./routes/employeesRoute');
 const guestsRouter = require('./routes/guestsRoute');
 const reservationsRouter = require('./routes/reservationsRoute');
 const roomTypesRouter = require('./routes/roomTypesRoute');
+const expenseRouter = require('./routes/expensesRoute');
 
 const AppError = require('./utils/appError');
 
@@ -61,6 +62,7 @@ app.use('/api/room-types', roomTypesRouter);
 app.use('/api/employees', employeesRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/guests', guestsRouter);
+app.use('/api/expenses', expenseRouter);
 
 //For the unhadled routes send the build react app
 app.use(express.static('../kube-comic-book-client/build'));
