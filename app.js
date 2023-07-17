@@ -65,10 +65,9 @@ app.use('/api/guests', guestsRouter);
 app.use('/api/expenses', expenseRouter);
 
 //For the unhadled routes send the build react app
-app.use(express.static('../kube-comic-book-client/build'));
-
-app.get('/test', (req, res) => {
-	res.send('Hello from the server');
+app.use(express.static('./dist'));
+app.use('*', (req, res) => {
+	res.sendFile(path.resolve(__dirname, './dist', 'index.html'));
 });
 
 //5) Global error handler
