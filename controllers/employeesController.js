@@ -48,11 +48,15 @@ const getAllEmployees = factory.getAll(Employee);
 
 const getEmployee = factory.getOne(Employee);
 const createEmployee = factory.createOne(Employee, [
-	'name',
+	'firstName',
+	'lastName',
+	'salary',
+	'hiredAt',
+	'dateOfBirth',
 	'email',
 	'password',
 	'role',
-	'passwordConfirm',
+	'phone',
 ]);
 const updateEmployee = factory.updateOne(Employee);
 const deleteEmployee = factory.deleteOne(Employee);
