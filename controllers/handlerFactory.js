@@ -23,7 +23,6 @@ const deleteOne = (Model) =>
 const updateOne = (Model, filter) =>
 	catchAsync(async (req, res, next) => {
 		const filteredBody = filter ? filterObj(req.body, ...filter) : req.body;
-		console.log(filteredBody);
 		const data = await Model.update(
 			{
 				...filteredBody,
@@ -32,7 +31,6 @@ const updateOne = (Model, filter) =>
 				where: { id: req.params.id },
 			}
 		);
-		console.log(data);
 		const doc = await Model.findByPk(req.params.id);
 
 		if (!doc) {
@@ -72,7 +70,6 @@ const getOne = (Model, populateOptions) =>
 		if (populateOptions) {
 			includes = { include: populateOptions.split(',') };
 		}
-		console.log(includes);
 		const doc = populateOptions
 			? await Model.findByPk(req.params.id, includes)
 			: await Model.findByPk(req.params.id);

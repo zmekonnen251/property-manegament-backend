@@ -27,6 +27,11 @@ router.get('/employee-reservations', protect, getEmployeeReservations);
 router.get('/guest-reservations', protect, getGuestReservations);
 router.delete('/:id', protect, restrictTo('admin'), deleteReservation);
 router.patch('/:id', protect, restrictTo('admin'), updateReservation);
-router.get('/:id', protect, restrictTo('admin'), getReservation);
+router.get(
+	'/:id',
+	protect,
+	restrictTo('admin', 'receptionist'),
+	getReservation
+);
 
 module.exports = router;

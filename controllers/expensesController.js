@@ -23,7 +23,7 @@ const getMonthlyStats = catchAsync(async (req, res, next) => {
 	monthlyExpense.forEach((expense) => {
 		monthlyTotalExpense += expense.amount;
 	});
-	console.log(monthlyTotalExpense);
+	
 	res.status(200).json({
 		status: 'success',
 		data: {

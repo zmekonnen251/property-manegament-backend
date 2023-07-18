@@ -191,7 +191,6 @@ const updateReservation = catchAsync(async (req, res, next) => {
 		}
 	);
 
-	console.log(reservation.rooms);
 
 	if (!(roomId in reservation.rooms)) {
 		await Room.update(
@@ -349,6 +348,9 @@ const getLatestReservations = catchAsync(async (req, res, next) => {
 		},
 	});
 });
+
+
+
 
 module.exports = {
 	createReservation,

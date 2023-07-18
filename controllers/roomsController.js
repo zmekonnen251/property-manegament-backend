@@ -152,6 +152,28 @@ const getRoomType = catchAsync(async (req, res, next) => {
 
 const deleteRoom = factory.deleteOne(Room);
 
+const getRoomTypeReservations = catchAsync(async (req, res, next) => {
+	const reservations = await Reservation.findAll();
+	const roomTypeRoomsIds = await Room.findAll({
+		where: {
+			RoomTypeId: req.params.id,
+		},
+		attributes: ['id'],
+	});
+
+	const roomTypeReservations = reservations.filter((reservation) => {
+		return reservation.rooms.some((room) =>
+			roomTypeRoomsIds.some((roomTypeRoom) => roomTypeRoom.id === room)
+		);
+	});
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			roomTypeReservations,
+		},
+	});
+});
 module.exports = {
 	deleteRoom,
 	createRoom,
@@ -165,4 +187,5 @@ module.exports = {
 	uploadRoomPageImages,
 	resizeRoomPageImages,
 	getRoom,
+	getRoomTypeReservations,
 };
