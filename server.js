@@ -54,19 +54,19 @@ Reservation.belongsTo(Employee, {
 });
 
 sequelize
-	.sync({ force: true })
+	.sync()
 	.then(() => {
-		Employee.create({
-			firstName: 'Admin',
-			lastName: 'Admin',
-			email: 'admin@email.com',
-			password: '1234abcd',
-			salary: 10000,
-			dateOfBirth: '1998-01-01',
-			phone: '0912345678',
-			role: 'admin',
-			hiredAt: '2021-01-01',
-		});
+		// Employee.create({
+		// 	firstName: 'Admin',
+		// 	lastName: 'Admin',
+		// 	email: 'admin@email.com',
+		// 	password: '1234abcd',
+		// 	salary: 10000,
+		// 	dateOfBirth: '1998-01-01',
+		// 	phone: '0912345678',
+		// 	role: 'admin',
+		// 	hiredAt: '2021-01-01',
+		// });
 		console.log('DB connection successful!');
 	})
 	.catch((err) => {
