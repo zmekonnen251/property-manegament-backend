@@ -47,13 +47,13 @@ const createOne = (Model, filter) =>
 	catchAsync(async (req, res, next) => {
 		const filteredBody = filter ? filterObj(req.body, ...filter) : req.body;
 
-		if (Model.name === 'User') {
+		if (Model.name === 'Employee') {
 			filteredBody.passwordChangedAt = Date.now() - 1000;
 		}
 
 		const doc = await Model.create(filteredBody);
 
-		if (Model.name === 'User') {
+		if (Model.name === 'Employee') {
 			doc.password = undefined;
 			doc.passwordChangedAt = undefined;
 		}

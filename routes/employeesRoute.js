@@ -13,7 +13,6 @@ const {
 } = require('../controllers/employeesController');
 const {
 	login,
-	register,
 	forgotPassword,
 	resetPassword,
 	updatePassword,
@@ -24,7 +23,7 @@ const {
 
 const router = express.Router();
 
-router.post('/register', register);
+// router.post('/register', register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:token', resetPassword);
@@ -40,7 +39,10 @@ router.patch('/updateMe', uploadEmployeePhoto, resizeEmployeePhoto, updateMe);
 
 router.use(restrictTo('admin'));
 
-router.route('/').get(getAllEmployees).post(createEmployee);
+router
+	.route('/')
+	.get(getAllEmployees)
+	.post(uploadEmployeePhoto, resizeEmployeePhoto, createEmployee);
 router
 	.route('/:id')
 	.patch(uploadEmployeePhoto, resizeEmployeePhoto, updateEmployee)

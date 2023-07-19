@@ -76,7 +76,7 @@ const Employee = sequelize.define(
 		},
 		photo: {
 			type: Sequelize.STRING,
-			defaultValue: 'uploads/users/img/default.jpg',
+			defaultValue: 'uploads/employees/images/default.jpg',
 		},
 		role: {
 			type: Sequelize.ENUM(

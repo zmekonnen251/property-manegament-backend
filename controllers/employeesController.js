@@ -32,7 +32,7 @@ const resizeEmployeePhoto = async (req, res, next) => {
 		req.employee.id
 	}-${Date.now()}.jpeg`;
 
-	const employeeImage = await sharp(req.file.buffer)
+	await sharp(req.file.buffer)
 		.resize(500, 500)
 		.toFormat('jpeg')
 		.jpeg({ quality: 90 })
@@ -47,17 +47,7 @@ const resizeEmployeePhoto = async (req, res, next) => {
 const getAllEmployees = factory.getAll(Employee);
 
 const getEmployee = factory.getOne(Employee);
-const createEmployee = factory.createOne(Employee, [
-	'firstName',
-	'lastName',
-	'salary',
-	'hiredAt',
-	'dateOfBirth',
-	'email',
-	'password',
-	'role',
-	'phone',
-]);
+const createEmployee = factory.createOne(Employee);
 const updateEmployee = factory.updateOne(Employee);
 const deleteEmployee = factory.deleteOne(Employee);
 

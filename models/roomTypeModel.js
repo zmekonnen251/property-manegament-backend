@@ -59,6 +59,12 @@ const RoomType = sequelize.define(
 				notNull: true,
 			},
 		},
+		cover: {
+			type:Sequelize.STRING
+		},
+		images: {
+			type:Sequelize.ARRAY(Sequelize.STRING)
+		}
 	},
 	{
 		hooks: {

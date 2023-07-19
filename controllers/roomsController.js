@@ -23,64 +23,44 @@ const upload = multer({
 	fileFilter: multerFilter,
 });
 
-const uploadRoomPageImages = upload.fields([
-	{ name: 'coverPage', maxCount: 1 },
-	{ name: 'pageImages', maxCount: 100 },
+const uploadRoomTypeImages = upload.fields([
+	{ name: 'cover', maxCount: 1 },
+	{ name: 'images', maxCount: 10 },
 ]);
 
-const resizeRoomPageImages = catchAsync(async (req, res, next) => {
-	if (!req.files.coverPageImage && !req.files.pageImages) return next();
-
-	const room = await Room.findByPk(req.params.id);
-
+const resizeRoomTypeImages = catchAsync(async (req, res, next) => {
+	if (!req.files.cover && !req.files.images) return next();
+	const roomTypeName = req.body.name.replace(/\s+/g, '-').toLowerCase();
+	const fileName = `roomType-${roomTypeName}-${Date.now()}-cover.jpeg`;
+	const cover = `uploads/roomTypes/${fileName}`;
 	// 1) Cover image
-	if (req.files.coverPage) {
-		req.body.coverPage = `room-${room.id}-cover.jpeg`;
-
-		if (!fs.existsSync(`uploads/rooms/room-${room.id}`)) {
-			fs.mkdirSync(`uploads/rooms/room-${room.id}`, {
-				recursive: true,
-			});
-		}
-
-		if (
-			fs.existsSync(`uploads/rooms/room-${room.id}/room-${room.id}-cover.jpeg`)
-		) {
-			fs.unlinkSync(`uploads/rooms/room-${room.id}/room-${room.id}-cover.jpeg`);
-		}
-
-		const covePageImage = await sharp(req.files.coverPage[0].buffer)
-			.toFormat('jpeg')
-			.jpeg({ quality: 90 })
-			.toFile(`uploads/rooms/room-${room.id}/room-${room.id}-cover.jpeg`);
-
-		// const url = await uploadImage(
-		//   `rooms/room-${room.id}`,
-		//   covePageImage,
-		//   req.body.coverPage
-		// );
+	if (!fs.existsSync(`uploads/roomTypes`)) {
+		fs.mkdirSync(`uploads/roomTypes`, {
+			recursive: true,
+		});
 	}
 
-	// 2) pages
-	if (req.files.pageImages) {
-		if (!fs.existsSync(`uploads/rooms/room-${room.id}`)) {
-			fs.mkdirSync(`uploads/rooms/room-${room.id}`, {
-				recursive: true,
-			});
-		}
+	if (req.files.cover) {
+		req.body.cover = `uploads/roomTypes/${fileName}`;
 
+		await sharp(req.files.cover[0].buffer)
+			.toFormat('jpeg')
+			.jpeg({ quality: 90 })
+			.toFile(cover);
+	}
+
+	// 2) Images
+	if (req.files.images) {
+		req.body.images = [];
 		await Promise.all(
-			req.files.pageImages.map(async (file, i) => {
-				const filename = req.files.pageImages[i]['originalname'];
+			req.files.images.map(async (file, i) => {
+				const filename = `uploads/roomTypes/${roomTypeName}-${Date.now()}-image-${i}.jpeg`;
 
-				if (fs.existsSync(`uploads/rooms/room-${room.id}/${filename}`)) {
-					fs.unlinkSync(`uploads/rooms/room-${room.id}/${filename}`);
-				}
-
-				const roomPageImg = await sharp(file.buffer)
+				req.body.images.push(filename);
+				await sharp(file.buffer)
 					.toFormat('jpeg')
 					.jpeg({ quality: 90 })
-					.toFile(`uploads/rooms/room-${room.id}/${filename}`);
+					.toFile(filename);
 
 				// const url = await uploadImage(
 				//   `rooms/room-${room.id}`,
@@ -115,7 +95,6 @@ const updateRoom = factory.updateOne(Room);
 
 const createRoomType = factory.createOne(RoomType);
 const getAllRoomTypes = factory.getAll(RoomType, 'Rooms');
-// const getRoomType = factory.getOne(RoomType, 'Rooms');
 const updateRoomType = factory.updateOne(RoomType);
 const deleteRoomType = factory.deleteOne(RoomType);
 
@@ -184,8 +163,8 @@ module.exports = {
 	getRoomType,
 	getAllRooms,
 	getAllRoomTypes,
-	uploadRoomPageImages,
-	resizeRoomPageImages,
+	uploadRoomTypeImages,
+	resizeRoomTypeImages,
 	getRoom,
 	getRoomTypeReservations,
 };

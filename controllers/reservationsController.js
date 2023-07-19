@@ -114,16 +114,30 @@ const getGuestReservations = catchAsync(async (req, res, next) => {
 	});
 });
 
-const getAllReservations = factory.getAll(Reservation, 'Room, Employee, Guest');
-//  const getMonthlyStats = catchAsync(async (req, res, next) => {
-// 	const monthlyReservation = await Reservation.findAll({
-// 		where: {
-// 			createdAt: {
-// 				[Op.gte]: new Date(new Date() - 30 * 60 * 60 * 24 * 1000),
-// 			},
-// 		},
-// 		include: [Room],
-// 	});
+const getAllReservations = catchAsync(async (req, res, next) => {
+	const reservations = await Reservation.findAll({
+		include: [Guest, Employee],
+	});
+
+	const rooms = await Room.findAll({
+		where: {
+			id: { [Op.in]: reservations.map((reservation) => reservation.rooms) },
+		},
+		include: [RoomType],
+	});
+
+	reservations.forEach((reservation) => {
+		reservation.dataValues.rooms = rooms.filter((room) =>
+			reservation.rooms.includes(room.id)
+		);
+	});
+
+	res.status(200).json({
+		status: 'success',
+		results: reservations.length,
+		data: reservations,
+	});
+});
 
 const deleteReservation = factory.deleteOne(Reservation);
 const getReservation = catchAsync(async (req, res, next) => {
@@ -190,7 +204,6 @@ const updateReservation = catchAsync(async (req, res, next) => {
 			include: [Employee, Guest],
 		}
 	);
-
 
 	if (!(roomId in reservation.rooms)) {
 		await Room.update(
@@ -348,9 +361,6 @@ const getLatestReservations = catchAsync(async (req, res, next) => {
 		},
 	});
 });
-
-
-
 
 module.exports = {
 	createReservation,

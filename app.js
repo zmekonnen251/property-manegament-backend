@@ -20,7 +20,7 @@ const {
 } = require('./controllers/errorController');
 
 const path = require('path');
-const { fileURLToPath } = require('url');
+// const { fileURLToPath } = require('url');
 
 unCaughtException();
 
@@ -33,7 +33,6 @@ app.enable('trust proxy');
 app.options('*', cors());
 
 // serving static files
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
