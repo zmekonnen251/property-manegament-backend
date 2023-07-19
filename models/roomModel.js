@@ -24,10 +24,10 @@ const Room = sequelize.define(
 		ready: {
 			type: Sequelize.BOOLEAN,
 			allowNull: false,
-			default:false,
+			default: false,
 		},
 		roomNumber: {
-			type: Sequelize.INTEGER,
+			type: Sequelize.STRING,
 			allowNull: false,
 			validate: {
 				notEmpty: true,
