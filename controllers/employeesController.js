@@ -28,9 +28,7 @@ const uploadEmployeePhoto = upload.single('photo');
 const resizeEmployeePhoto = async (req, res, next) => {
 	if (!req.file) return next();
 
-	req.file.filename = `uploads/employees/images/employee-${
-		req.employee.id
-	}-${Date.now()}.jpeg`;
+	req.file.filename = `uploads/employees/images/employee-${Date.now()}.jpeg`;
 
 	await sharp(req.file.buffer)
 		.resize(500, 500)
@@ -47,7 +45,39 @@ const resizeEmployeePhoto = async (req, res, next) => {
 const getAllEmployees = factory.getAll(Employee);
 
 const getEmployee = factory.getOne(Employee);
-const createEmployee = factory.createOne(Employee);
+const createEmployee = catchAsync(async (req, res, next) => {
+	const {
+		firstName,
+		lastName,
+		email,
+		salary,
+		password,
+		dateOfBirth,
+		phone,
+		role,
+		hiredAt,
+		photo,
+	} = req.body;
+
+	const newEmployee = await Employee.create({
+		firstName,
+		lastName,
+		email,
+		salary,
+		password,
+		dateOfBirth: '2018-01-09',
+		phone,
+		role,
+		hiredAt: '2023-07-19',
+		photo,
+	});
+
+	res.status(200).json({
+		status: 'success',
+		data: newEmployee.dataValues,
+	});
+});
+
 const updateEmployee = factory.updateOne(Employee);
 const deleteEmployee = factory.deleteOne(Employee);
 
