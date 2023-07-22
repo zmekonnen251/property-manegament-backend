@@ -3,8 +3,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 
-const corsOptions = require('./config/corsOptions');
-
 const roomsRouter = require('./routes/roomsRoute');
 const employeesRouter = require('./routes/employeesRoute');
 const guestsRouter = require('./routes/guestsRoute');
@@ -35,9 +33,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (process.env.NODE_ENV === 'production') {
-	app.use(cors(corsOptions));
+	app.use(cors(require('./config/corsOptions')));
 }
-
 
 // serving static files
 
