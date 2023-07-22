@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 
-// const corsOptions = require('./config/corsOptions');
+const corsOptions = require('./config/corsOptions');
 
 const roomsRouter = require('./routes/roomsRoute');
 const employeesRouter = require('./routes/employeesRoute');
@@ -30,9 +30,14 @@ const app = express();
 
 // app.enable('trust proxy');
 // 1) GLOBAL MIDDLEWARES
+if (process.env.NODE_ENV === 'development') {
+	app.options(cors('*'));
+}
 
-// app.use(cors(corsOptions));
-app.options(cors('*'));
+if (process.env.NODE_ENV === 'production') {
+	app.use(cors(corsOptions));
+}
+
 
 // serving static files
 
