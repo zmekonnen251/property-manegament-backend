@@ -1,0 +1,23 @@
+/* RESET STYLES */
+img {
+	border: 0;
+	outline: none;
+	text-decoration: none;
+}
+table {
+	border-collapse: collapse !important;
+	border-spacing: 0 !important;
+}
+td {
+	padding: 0;
+}
+body {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+}
+
+/* remove text-decoration for windows 10 mail app */
+a {
+	text-decoration: none !important;
+}

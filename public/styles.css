@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #0066cc;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+h1 {
+  color: #0066cc;
+  text-align: center;
+}
+
+p {
+  margin-bottom: 10px;
+}
+
+.room-image {
+  max-width: 100%;
+  display: block;
+  margin: 20px auto;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0066cc;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.footer {
+  text-align: center;
+}

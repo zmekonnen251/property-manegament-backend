@@ -1,0 +1,11 @@
+/* OUTLOOK WEB ACCESS */
+[owa] .td,
+[owa] .tfoot,
+[owa] .thead {
+	display: table-cell;
+	vertical-align: top;
+}
+[owa] .table {
+	display: table;
+	width: 100%;
+}

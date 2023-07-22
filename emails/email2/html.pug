@@ -1,0 +1,212 @@
+//- MIXINS
+include partials/mixins/grids/responsive/mix-responsive-grid.pug
+include partials/mixins/grids/responsive/mix-responsive-grid-item.pug
+include partials/mixins/mix-link.pug
+include partials/mixins/mix-mso.pug
+
+//- VARIABLES
+include partials/variables.pug
+
+//- DOCUMENT
+doctype html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"
+html(lang="en")
+
+  //- Document Head
+  head
+    include partials/head.pug
+
+    style(type="text/css")
+      include partials/css/0dev.css
+    style(type="text/css")
+      include partials/css/1client-specific-styles.css
+    style(type="text/css")
+      include partials/css/2reset-tags.css
+    style(type="text/css")
+      include partials/css/3outlook-font.css
+    style(type="text/css")
+      include partials/css/4fonts.css
+    style(type="text/css")
+      include partials/css/5ios-blue-links.css
+    style(type="text/css")
+      include partials/css/6android-fix.css
+    style(type="text/css")
+      include partials/css/7media-queries.css
+    style(type="text/css")
+      include partials/css/8media-queries.css
+    style(type="text/css")
+      include partials/css/9owa.css
+
+  //- Document Content wrapper-table
+  body.body(style=m0+p0+bgcw+text_normal)
+    //- why do I need this? commented out the mobileOff/On styles too
+    //- span.mobileOff(style=disb+w640+mw640+h1+bgcnnb+m0a)
+    center
+      table(width="100%" bgcolor=white)&attributes(table_reset)
+        tr: td(style=b0)&attributes(td_reset)
+
+
+          //- START ----->
+
+          blockquote(style=m0+p0)
+            form(style=bgcdg+"display: inline-block;box-shadow: 0px 0px 15px 5px rgba(36, 36, 36, 0.3215686274509804);" action="" method="get" target="_blank")
+              //- SPACER
+              +responsive_grid(640, 600, 30)
+
+              //- logo
+              +responsive_grid(640, 600, 1)
+                +responsive_grid_item(600)
+                  img(src="../images/rnlmc_logo_com.png" alt="RNLMC logo" height="130px")
+
+              //- headline
+              +responsive_grid(640, 600, 1)
+                +responsive_grid_item(600)
+                  h1(style=m0+fs35+text_normal) Qua Patet Orbis
+
+              //- subheadline
+              +responsive_grid(640, 600, 10)
+                +responsive_grid_item(600)
+                  h2(style=m0+fs16+text_bold) The Royal Netherlands Marine Corps | December 10, 1665
+
+              //- SPACER Border
+              +responsive_grid(640, 500, 20)
+                td.mobile(style=bb1w)&attributes(td_reset)
+
+              //- product grid
+              +responsive_grid(640, 600, 1)
+                +responsive_grid_item(150, 20)
+                  img(src="../images/iphony.jpg" alt="Mobile Phone" width="133")
+                  p(style=fs14+text_normal)
+                    span(style=text_bold) Mobile Phone
+                    br
+                    | Wireless
+                    br
+                    | Light Weight
+                  p(style=fs20+text_bold) $50 off
+                  +mso_no()
+                    p(style=fs14+text_normal) Qty.&nbsp;
+                      select(name="qty-iphony")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
+                        option(value="3") 3
+                        option(value="4") 4
+                  +mso_yes()
+                    +link('#0')
+                      | &nbsp;&nbsp;&nbsp;Add to cart&nbsp;&nbsp;&nbsp;
+
+                +responsive_grid_item(150, 20)
+                  img(src="../images/water-taxi.jpg" alt="Water Taxi" width="133")
+                  p(style=fs14+text_normal)
+                    span(style=text_bold) Water Taxi
+                    br
+                    | Great for Fishing
+                    br
+                    | Build for speed
+                  p(style=fs20+text_bold) $400 off
+                  +mso_no()
+                    p(style=fs14+text_normal) Qty.&nbsp;
+                      select(name="qty-water-taxi")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
+                        option(value="3") 3
+                        option(value="4") 4
+                  +mso_yes()
+                    +link('#0')
+                      | &nbsp;&nbsp;&nbsp;Add to cart&nbsp;&nbsp;&nbsp;
+
+                +responsive_grid_item(150, 20)
+                  img(src="../images/peanut-dispenser.png" alt="Peanut Dispenser" width="133")
+                  p(style=fs14+text_normal)
+                    span(style=text_bold) Peanut Dispenser
+                    br
+                    | Ruggedized
+                    br
+                    | Yet Smooth
+                  p(style=fs20+text_bold) $200 off
+                  +mso_no()
+                    p(style=fs14+text_normal) Qty.&nbsp;
+                      select(name="qty-peanut-dispenser")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
+                        option(value="3") 3
+                        option(value="4") 4
+                  +mso_yes()
+                    +link('#0')
+                      | &nbsp;&nbsp;&nbsp;Add to cart&nbsp;&nbsp;&nbsp;
+
+                +responsive_grid_item(150, 20)
+                  img(src="../images/terrain-taxi.jpg" alt="All Terrain Taxi" width="133")
+                  p(style=fs14+text_normal)
+                    span(style=text_bold) Terrain Taxi
+                    br
+                    | Pannoramic Sunroof
+                    br
+                    | Climate Contol
+                  p(style=fs20+text_bold) $300 off
+                  +mso_no()
+                    p(style=fs14+text_normal) Qty.&nbsp;
+                      select(name="qty-terrain-taxi")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
+                        option(value="3") 3
+                        option(value="4") 4
+                  +mso_yes()
+                    +link('#0')
+                      | &nbsp;&nbsp;&nbsp;Add to cart&nbsp;&nbsp;&nbsp;
+
+              +mso_no()
+                //- checkout button
+                +responsive_grid(640, 600, 20)
+                  +responsive_grid_item(600)
+                    button(type="submit" style=b0+fs14+text_bold+'cursor: pointer; padding: 10px 15px; background-color: '+red) Proceed to checkout
+
+              //- notice
+              +responsive_grid(640, 600, 10)
+                +responsive_grid_item(600)
+                  p(style=m0+p0+fs12+text_normal) *Tax and shipping calculated at checkout.
+
+              //- SPACER Border
+              +responsive_grid(640, 500, 10)
+                td.mobile(style=bb1w)&attributes(td_reset)
+
+              //- social
+              +responsive_grid(640, 600, 10)
+                +responsive_grid_item(600)
+                  p
+                    a(href="#" style=fs20+text_normal+ 'padding:0 10px;')
+                      i(aria-hidden class="fab fa-youtube" title="Youtube")
+                      span(class="sr-only" style=text_normal+fs14) Youtube
+                    span(style=text_normal+fs14) &nbsp;
+                    a(href="#" style=fs20+text_normal+ 'padding:0 10px;')
+                      i(aria-hidden class="fab fa-twitter" title="Twitter")
+                      span(class="sr-only" style=text_normal+fs14) Twitter
+                    span(style=text_normal+fs14) &nbsp;
+                    a(href="#" style=fs20+text_normal+ 'padding:0 10px;')
+                      i(aria-hidden class="fab fa-linkedin-in" title="Linkedin-in")
+                      span(class="sr-only" style=text_normal+fs14) Linkedin-in
+                    span(style=text_normal+fs14) &nbsp;
+
+
+
+
+              //- footer logo
+              +responsive_grid(640, 600, 10)
+                +responsive_grid_item(600)
+                  img(src="../images/rnlmc_logo_com.png" alt="USP logo" height="80px")
+              //- footer links
+              //- footer copyright
+              +responsive_grid(640, 600, 5)
+                +responsive_grid_item(600)
+                  p(style=m0+p0+text_normal)
+                    a(href="#" style=text_normal+fs12) QPO
+                    |  |&nbsp;
+                    a(href="#" style=text_normal+fs12) Privacy Policy
+                    |  |&nbsp;
+                    a(href="#" style=text_normal+fs12) Terms of Use
+                  p(style=p0+fs12+text_normal+ 'margin-top:5px;') &copy; Royal Netherlands Marine Corps
+
+              //- SPACER
+              +responsive_grid(640, 600, 20)
