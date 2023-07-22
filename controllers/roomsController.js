@@ -4,9 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const multer = require('multer');
 const sharp = require('sharp');
-const fs = require('fs');
-const getAccessToken = require('../utils/getAccessToken');
 const Reservation = require('../models/reservationModel');
+const Hotel = require('../models/hotelModel');
 
 const multerStorage = multer.memoryStorage();
 
@@ -31,22 +30,15 @@ const uploadRoomTypeImages = upload.fields([
 const resizeRoomTypeImages = catchAsync(async (req, res, next) => {
 	if (!req.files.cover && !req.files.images) return next();
 	const roomTypeName = req.body.name.replace(/\s+/g, '-').toLowerCase();
-	const fileName = `roomType-${roomTypeName}-${Date.now()}-cover.jpeg`;
-	const cover = `uploads/roomTypes/${fileName}`;
+
 	// 1) Cover image
-	if (!fs.existsSync(`uploads/roomTypes`)) {
-		fs.mkdirSync(`uploads/roomTypes`, {
-			recursive: true,
-		});
-	}
-
 	if (req.files.cover) {
-		req.body.cover = `uploads/roomTypes/${fileName}`;
+		req.body.cover = `uploads/roomTypes/${roomTypeName}-${Date.now()}-cover.jpeg`;
 
-		await sharp(req.files.cover[0].buffer)
+		const result = await sharp(req.files.cover[0].buffer)
 			.toFormat('jpeg')
 			.jpeg({ quality: 90 })
-			.toFile(cover);
+			.toFile(req.body.cover);
 	}
 
 	// 2) Images
@@ -93,27 +85,59 @@ const createRoom = catchAsync(async (req, res, next) => {
 
 const updateRoom = factory.updateOne(Room);
 
-const createRoomType = factory.createOne(RoomType);
-const getAllRoomTypes = factory.getAll(RoomType, 'Rooms');
+const createRoomType = catchAsync(async (req, res, next) => {
+	console.log(req.body);
+	console.log(req.files);
+	const roomType = await RoomType.create({
+		...req.body,
+	});
+	console.log(roomType);
+	res.status(201).json({
+		status: 'success',
+		data: {
+			data: roomType.dataValues,
+		},
+	});
+});
+
+const getAllRoomTypes = catchAsync(async (req, res, next) => {
+	const roomTypes = await RoomType.findAll({
+		include: [
+			{
+				model: Room,
+				attributes: ['id', 'status'],
+			},
+			{
+				model: Hotel,
+				attributes: ['id', 'name'],
+			},
+		],
+	});
+	console.log(roomTypes);
+	res.status(200).json({
+		status: 'success',
+		results: roomTypes.length,
+		data: {
+			data: roomTypes,
+		},
+	});
+});
+
 const updateRoomType = factory.updateOne(RoomType);
 const deleteRoomType = factory.deleteOne(RoomType);
 
 const getRoomType = catchAsync(async (req, res, next) => {
-	const roomType = await RoomType.findByPk(req.params.id, {
-		include: [
-			{
-				model: Room,
-			},
-		],
-	});
-
-	const unavailableRooms = roomType.Rooms.filter(
+	const roomType = await RoomType.findByPk(req.params.id);
+	const rooms = await roomType.getRooms();
+	const hotel = await roomType.getHotel();
+	const unavailableRooms = rooms.filter(
 		(room) => room.status === 'unavailable'
 	);
 
-	const availableRooms = roomType.Rooms.filter(
-		(room) => room.status === 'available'
-	);
+	const availableRooms = rooms.filter((room) => room.status === 'available');
+
+	roomType.dataValues.rooms = rooms;
+	roomType.dataValues.hotel = hotel.dataValues;
 
 	const result = {
 		...roomType.dataValues,

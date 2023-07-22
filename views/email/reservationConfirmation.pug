@@ -1,0 +1,46 @@
+//- This is the email template that will be sent to the user when they make a reservation
+//- the email should contain the following information:
+//- - the guest's first name, last name, email, phone number, 
+//- - the room type, capacity, paidAmount,dateIn,dateOut,roomImage,roomNumber
+//- - the hotel's name, address, phone number, email, website
+//- - the hotel's logo
+//- - the hotel's social media links
+//- - the hotel's privacy policy and terms of use
+//- - the hotel's copy right
+//- - the hotel's name
+
+extends baseEmail 
+
+block content 
+  p Hi #{firstName},
+  p Thank you for booking a reservation with us, we're glad to have you 🎉🙏
+  p We're all a big familiy here, so make sure to upload your user photo so we get to know you a bit better!
+  
+  h3 Here is your reservation information:
+  ul 
+    li First Name: 
+      strong #{firstName}
+    li Last Name: 
+      strong #{lastName}
+    li Email:
+      strong #{email}
+    li Phone Number:
+      strong #{phone}
+    li Room Type: 
+      strong #{roomType}
+    li Room Capacity:
+      strong #{capacity}
+    li Paid Amount:
+      strong #{paidAmount}
+    li Date In:
+      strong #{dateIn}
+    li Date Out:
+      strong #{dateOut}
+    li Room Number:
+      strong #{roomNumber}
+    
+    img.room-image(src=roomImage, alt='Room Image')
+
+
+  //-Hotel Logo: #{hotelLogo}
+   img.room-image(src=data.imageUrl, alt='Room Image')

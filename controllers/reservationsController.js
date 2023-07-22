@@ -8,85 +8,8 @@ const Employee = require('../models/employeeModel');
 const Guest = require('../models/guestModel');
 const { Op } = require('sequelize');
 const RoomType = require('../models/roomTypeModel');
+const Email = require('../utils/email');
 dotenv.config();
-
-//  const chapaCheckout = catchAsync(async (req, res, next) => {
-// 	const room = await Room.findByPk(req.params.roomId);
-// 	const userReservations = await req.user.getReservations({
-// 		where: { RoomId: room.id },
-// 	});
-
-// 	if (userReservations.length > 0) {
-// 		return next(new AppError('You already bought this room', 400));
-// 	}
-
-// 	// chapa redirect you to this url when payment is successful
-// 	const TRX_REF = `tx-kubecomics-${Date.now()}-${req.user.id}-${
-// 		req.params.roomId
-// 	}`;
-// 	const RETURN_URL = `${req.get('origin')}/profile/my-rooms?success=true`;
-// 	const CALLBACK_URL = `${process.env.BASE_URL}/api/reservations/verify-chapa-payment/${TRX_REF}`;
-
-// 	// form data
-// 	const data = {
-// 		amount: `${room.price}`,
-// 		currency: 'ETB',
-// 		email: `${req.user.email}`,
-// 		first_name: `${req.user.name.split(' ')[0]}`,
-// 		last_name: `${req.user.name.split(' ')[1]}`,
-// 		tx_ref: TRX_REF,
-// 		callback_url: CALLBACK_URL,
-// 		return_url: RETURN_URL,
-// 		customizations: {
-// 			title: 'Kube Comics Room',
-// 			description: `Payment for ${room.title}`,
-// 			logo: 'https://kubecomicseth.com/static/media/logo.a5f8aefb44babbcd6e25.png',
-// 		},
-// 	};
-
-// 	const chapaResponse = await axios.post(CHAPA_URL, data, config);
-
-// 	if (chapaResponse.data.status !== 'success') {
-// 		return next(new AppError('Payment failed', 404));
-// 	}
-
-// 	res.status(200).json({
-// 		status: 'success',
-// 		checkout_url: chapaResponse.data.data.checkout_url,
-// 	});
-// });
-
-//  const verifyChapaPayment = catchAsync(async (req, res, next) => {
-// 	try {
-// 		const { data } = await axios.get(
-// 			`https://api.chapa.co/v1/transaction/verify/${req.params.id}`,
-// 			config
-// 		);
-
-// 		if (data.status === 'success') {
-// 			const userId = req.params.id.split('-')[3];
-// 			const roomId = req.params.id.split('-')[4];
-// 			const user = await Employee.findByPk(parseInt(userId));
-
-// 			const reservation = await Reservation.create({
-// 				paid: true,
-// 				RoomId: roomId,
-// 				EmployeeId: userId,
-// 			});
-
-// 			const transaction = await user.createTransaction({
-// 				amount: data.data.amount,
-// 				status: 'success',
-// 				type: 'payment',
-// 				paymentMethod: 'chapa',
-// 				paymentId: req.params.id,
-// 			});
-// 		}
-// 		res.status(200).json({ received: true });
-// 	} catch (err) {
-// 		return next(new AppError('Payment failed', 404));
-// 	}
-// });
 
 const getEmployeeReservations = catchAsync(async (req, res, next) => {
 	//get all reservations of a user and include the room then change the response to JSON
@@ -94,7 +17,7 @@ const getEmployeeReservations = catchAsync(async (req, res, next) => {
 
 	res.status(200).json({
 		status: 'success',
-		results: reservations.length,
+		results: reservations?.length,
 		data: {
 			reservations,
 		},
@@ -107,7 +30,7 @@ const getGuestReservations = catchAsync(async (req, res, next) => {
 
 	res.status(200).json({
 		status: 'success',
-		results: reservations.length,
+		results: reservations?.length,
 		data: {
 			reservations,
 		},
@@ -134,7 +57,7 @@ const getAllReservations = catchAsync(async (req, res, next) => {
 
 	res.status(200).json({
 		status: 'success',
-		results: reservations.length,
+		results: reservations?.length,
 		data: reservations,
 	});
 });
@@ -151,10 +74,12 @@ const getReservation = catchAsync(async (req, res, next) => {
 
 	const rooms = await Room.findAll({
 		where: {
-			id: { [Op.in]: reservation.rooms },
+			id: { [Op.in]: reservation?.rooms },
 		},
 		include: [RoomType],
 	});
+
+	const assignedTo = await Employee.findByPk(reservation.assignedTo);
 
 	reservation.dataValues.rooms = rooms;
 
@@ -229,7 +154,7 @@ const updateReservation = catchAsync(async (req, res, next) => {
 });
 
 const createReservation = catchAsync(async (req, res, next) => {
-	const {
+	let {
 		firstName,
 		lastName,
 		phone,
@@ -239,9 +164,21 @@ const createReservation = catchAsync(async (req, res, next) => {
 		paidBy,
 		paidAmount,
 		roomId,
+		assignedTo,
+		idNumber,
+		idType,
 	} = req.body;
-
-	const newGuest = await Guest.create({ firstName, lastName, phone, email });
+	if (req.body.assignedTo === '') {
+		assignedTo = null;
+	}
+	const newGuest = await Guest.create({
+		firstName,
+		lastName,
+		phone,
+		email,
+		idNumber,
+		idType,
+	});
 	let newReservation;
 	if (newGuest) {
 		newReservation = await Reservation.create({
@@ -252,7 +189,8 @@ const createReservation = catchAsync(async (req, res, next) => {
 			paidAmount,
 			EmployeeId: req.employee.id,
 			status: 'checkedIn',
-			rooms: [roomId],
+			rooms: [parseInt(roomId)],
+			assignedTo: assignedTo,
 		});
 
 		if (newReservation) {
@@ -267,10 +205,23 @@ const createReservation = catchAsync(async (req, res, next) => {
 		}
 	}
 
+	const room = await Room.findByPk(roomId, { include: [RoomType] });
+	const guest = await newReservation.getGuest();
+	let assignedEmployee;
+	if (assignedTo) assignedEmployee = await Employee.findByPk(assignedTo);
+	newReservation.dataValues.Guest = guest.dataValues;
+	newReservation.dataValues.rooms = [room];
+	if (assignedEmployee)
+		newReservation.dataValues.assignedEmployee = assignedEmployee;
+
 	if (!newReservation) {
 		return next(new AppError('Something went wrong', 404));
 	}
-
+	const reservation = {
+		...newReservation.dataValues,
+	};
+	console.log(reservation);
+	await new Email().sendReservationConfirmation(guest.email, reservation);
 	res.status(200).json({ status: 'success', data: newReservation });
 });
 
@@ -322,9 +273,9 @@ const getMonthlyStats = catchAsync(async (req, res, next) => {
 	});
 
 	const monthlyStats = {
-		monthlyReservation: monthlyReservation.length,
+		monthlyReservation: monthlyReservation?.length,
 		monthlyRevenue,
-		numberOfReservations: monthlyReservation.length,
+		numberOfReservations: monthlyReservation?.length,
 	};
 
 	res.status(200).json({
@@ -350,6 +301,12 @@ const getLatestReservations = catchAsync(async (req, res, next) => {
 		rooms.forEach((room) => {
 			if (reservation.rooms.includes(room.id)) {
 				reservation.dataValues.Room = room;
+			}
+
+			if (reservation.assignedTo) {
+				Employee.findByPk(reservation.assignedTo).then((employee) => {
+					reservation.dataValues.assignedEmployee = employee;
+				});
 			}
 		});
 	});

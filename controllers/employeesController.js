@@ -65,10 +65,10 @@ const createEmployee = catchAsync(async (req, res, next) => {
 		email,
 		salary,
 		password,
-		dateOfBirth: '2018-01-09',
+		dateOfBirth,
 		phone,
 		role,
-		hiredAt: '2023-07-19',
+		hiredAt,
 		photo,
 	});
 
@@ -78,7 +78,20 @@ const createEmployee = catchAsync(async (req, res, next) => {
 	});
 });
 
-const updateEmployee = factory.updateOne(Employee);
+const updateEmployee = factory.updateOne(Employee, [
+	'firstName',
+	'lastName',
+	'email',
+	'salary',
+	'dateOfBirth',
+	'phone',
+	'role',
+	'hiredAt',
+	'photo',
+	'idNumber',
+	'active',
+	'password',
+]);
 const deleteEmployee = factory.deleteOne(Employee);
 
 //A employee can update,delete and get his/her profile

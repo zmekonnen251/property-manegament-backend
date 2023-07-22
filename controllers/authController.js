@@ -7,7 +7,24 @@ const generateJwtToken = require('../utils/generateJwtToken');
 const Email = require('../utils/email');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
+
 dotenv.config();
+const reservationData = {
+	firstName: 'John',
+	lastName: 'Doe',
+	roomNumber: 101,
+	phone: '+251912345678',
+	hotelName: 'Hotel Awesome',
+	hotelAddress: 'Johansburg, South Africa',
+	roomType: 'Deluxe Room',
+	dateIn: '2023-07-30',
+	dateOut: '2023-08-02',
+	roomImage:
+		'https://t3.ftcdn.net/jpg/02/71/08/28/360_F_271082810_CtbTjpnOU3vx43ngAKqpCPUBx25udBrg.jpg',
+	paidBy: 'cash',
+	paidAmount: 1000,
+	capacity: 2,
+};
 
 const createAndSendCookie = (employee, res, token) => {
 	const cookiesOption = {
@@ -77,6 +94,7 @@ const login = catchAsync(async (req, res, next) => {
 	if (!(await employee.correctPassword(password, employee.password)))
 		return next(new AppError('Incorrect password!', 401));
 	// 3 ) If everything correct send token to client
+
 
 	const accessToken = generateJwtToken('access', employee);
 

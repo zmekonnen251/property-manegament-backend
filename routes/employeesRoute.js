@@ -36,12 +36,11 @@ router.get('/me', getMe, getEmployee);
 router.patch('/update-my-password', updatePassword);
 router.delete('/deleteMe', deleteMe);
 router.patch('/updateMe', uploadEmployeePhoto, resizeEmployeePhoto, updateMe);
-
+router.route('/').get(getAllEmployees);
 router.use(restrictTo('admin'));
 
 router
 	.route('/')
-	.get(getAllEmployees)
 	.post(uploadEmployeePhoto, resizeEmployeePhoto, createEmployee);
 router
 	.route('/:id')

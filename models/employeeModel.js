@@ -82,8 +82,9 @@ const Employee = sequelize.define(
 			type: Sequelize.ENUM(
 				'admin',
 				'manager',
-				'receptionist',
-
+				'receptionist1',
+				'receptionist2',
+				'careTaker',
 				'cleaner',
 				'chef',
 				'waiter',

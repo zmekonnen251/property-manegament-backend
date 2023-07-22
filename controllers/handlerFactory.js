@@ -5,6 +5,8 @@ const apiFeatures = require('./../utils/apiFeatures');
 const sequelize = require('../config/db');
 const { Op } = require('sequelize');
 const getAccessToken = require('../utils/getAccessToken');
+const Room = require('../models/roomModel');
+const Hotel = require('../models/hotelModel');
 
 const deleteOne = (Model) =>
 	catchAsync(async (req, res, next) => {
@@ -43,15 +45,13 @@ const updateOne = (Model, filter) =>
 		});
 	});
 
-const createOne = (Model, filter) =>
+const createOne = (Model) =>
 	catchAsync(async (req, res, next) => {
-		const filteredBody = filter ? filterObj(req.body, ...filter) : req.body;
-
 		if (Model.name === 'Employee') {
-			filteredBody.passwordChangedAt = Date.now() - 1000;
+			req.body.passwordChangedAt = Date.now() - 1000;
 		}
 
-		const doc = await Model.create(filteredBody);
+		const doc = await Model.create(req.body);
 
 		if (Model.name === 'Employee') {
 			doc.password = undefined;
@@ -98,6 +98,9 @@ const getAll = (Model, populateOptions) =>
 
 		const queryObj = apiFeatures(req.query);
 		queryObj.includes = includes;
+		if (Model.name === 'RoomType') {
+			queryObj.indclude = [Room, Hotel];
+		}
 
 		const total = await Model.count();
 		const doc = await Model.findAll(queryObj);

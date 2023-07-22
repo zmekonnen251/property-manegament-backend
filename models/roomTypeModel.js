@@ -60,11 +60,11 @@ const RoomType = sequelize.define(
 			},
 		},
 		cover: {
-			type:Sequelize.STRING
+			type: Sequelize.STRING,
 		},
 		images: {
-			type:Sequelize.ARRAY(Sequelize.STRING)
-		}
+			type: Sequelize.ARRAY(Sequelize.STRING),
+		},
 	},
 	{
 		hooks: {

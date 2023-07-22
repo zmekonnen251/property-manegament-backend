@@ -35,6 +35,10 @@ const Reservation = sequelize.define(
 			type: Sequelize.ARRAY(Sequelize.INTEGER),
 			allowNull: false,
 		},
+		assignedTo: {
+			type: Sequelize.INTEGER,
+			allowNull: true,
+		},
 	},
 	{
 		timestamps: true,
